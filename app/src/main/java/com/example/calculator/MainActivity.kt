@@ -4,17 +4,23 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private var number: String? = null
-    var firstNumber: Double = 0.0
-    var lastNumber: Double = 0.0
-    var status: String? = null
-    var operator: Boolean = false
-    var myFormatter = DecimalFormat("######.######")
+    private var firstNumber: Double = 0.0
+    private var lastNumber: Double = 0.0
+    private var status: String? = null
+    private var operator: Boolean = false
+    private var myFormatter = DecimalFormat("######.######")
+    private var history: String? = null
+    private var currentResult: String? = null
+    private var dot = true
+    private var btnAcControl = true
+    private var btnEqualsControl = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +28,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onClick(v: View?) {
         if (v != null) {
             when (v.id) {
@@ -56,21 +63,46 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     numberClick("9")
                 }
                 R.id.btnAC -> {
+                    number = null
+                    status = null
+                    textViewResult.text = "0"
+                    textViewHistory.text = ""
+                    firstNumber = 0.0
+                    lastNumber = 0.0
+                    dot = true
+                    btnAcControl = true
 
                 }
                 R.id.btnDel -> {
-
+                    if (btnAcControl) {
+                        textViewResult.text = "0"
+                    } else {
+                        number = number?.substring(0, number!!.length - 1)
+                        if (number?.isEmpty() == true) {
+                            btnDel.isClickable = false
+                        } else dot = !number?.contains(".")!!
+                        textViewResult.text = number
+                    }
                 }
                 R.id.btnPlus -> {
+                    history = textViewHistory.text.toString()
+                    currentResult = textViewResult.text.toString()
+                    textViewHistory.text = "$history$currentResult+"
+
                     if (operator) {
-                        if (status == "multiplication") {
-                            multiply()
-                        } else if (status == "division") {
-                            divide()
-                        } else if (status == "subtraction") {
-                            minus()
-                        } else {
-                            plus()
+                        when (status) {
+                            "multiplication" -> {
+                                multiply()
+                            }
+                            "division" -> {
+                                divide()
+                            }
+                            "subtraction" -> {
+                                minus()
+                            }
+                            else -> {
+                                plus()
+                            }
                         }
 
                     }
@@ -79,15 +111,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     number = null
                 }
                 R.id.btnMinus -> {
+                    history = textViewHistory.text.toString()
+                    currentResult = textViewResult.text.toString()
+                    textViewHistory.text = "$history$currentResult-"
                     if (operator) {
-                        if (status == "multiplication") {
-                            multiply()
-                        } else if (status == "division") {
-                            divide()
-                        } else if (status == "sum") {
-                            plus()
-                        } else {
-                            minus()
+                        when (status) {
+                            "multiplication" -> {
+                                multiply()
+                            }
+                            "division" -> {
+                                divide()
+                            }
+                            "sum" -> {
+                                plus()
+                            }
+                            else -> {
+                                minus()
+                            }
                         }
                     }
                     status = "subtraction"
@@ -95,6 +135,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     number = null
                 }
                 R.id.btnMultiple -> {
+                    history = textViewHistory.text.toString()
+                    currentResult = textViewResult.text.toString()
+                    textViewHistory.text = "$history$currentResult*"
                     if (operator) {
                         when (status) {
                             "sum" -> {
@@ -116,15 +159,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     number = null
                 }
                 R.id.btnDivide -> {
+                    history = textViewHistory.text.toString()
+                    currentResult = textViewResult.text.toString()
+                    textViewHistory.text = "$history$currentResult/"
                     if (operator) {
-                        if (status == "multiplication") {
-                            multiply()
-                        } else if (status == "sum") {
-                            plus()
-                        } else if (status == "subtraction") {
-                            minus()
-                        } else {
-                            divide()
+                        when (status) {
+                            "multiplication" -> {
+                                multiply()
+                            }
+                            "sum" -> {
+                                plus()
+                            }
+                            "subtraction" -> {
+                                minus()
+                            }
+                            else -> {
+                                divide()
+                            }
                         }
                     }
                     status = "division"
@@ -133,38 +184,64 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 R.id.btnEquals -> {
                     if (operator) {
-                        if (status == "sum") {
-                            plus()
-                        } else if (status == "subtraction") {
-                            minus()
-                        } else if (status == "multiplication") {
-                            multiply()
-                        } else if (status == "division") {
-                            divide()
-                        }else{
-                            firstNumber = java.lang.Double.parseDouble(textViewResult.text.toString())
+                        when (status) {
+                            "sum" -> {
+                                plus()
+                            }
+                            "subtraction" -> {
+                                minus()
+                            }
+                            "multiplication" -> {
+                                multiply()
+                            }
+                            "division" -> {
+                                divide()
+                            }
+                            else -> {
+                                firstNumber =
+                                    java.lang.Double.parseDouble(textViewResult.text.toString())
+                            }
                         }
                     }
 
-                    operator=false
-
+                    operator = false
+                    btnEqualsControl = true
                 }
                 R.id.btnDot -> {
+                    if (dot) {
+                        if (number == null) {
+                            number = "0."
+                        } else {
+                            number += "."
+                        }
+                    }
 
+                    textViewResult.text = number
+                    dot = false
                 }
-
             }
         }
     }
 
     private fun numberClick(view: String) {
-        if (number == null) {
-            number = view
-        } else {
-            number = number + view
+        when {
+            number == null -> {
+                number = view
+            }
+            btnEqualsControl -> {
+                firstNumber = 0.0
+                lastNumber = 0.0
+                number = view
+            }
+            else -> {
+                number += view
+            }
         }
         textViewResult.text = number
         operator = true
+        btnAcControl = false
+        btnDel.isClickable = true
+        btnEqualsControl = false
     }
 
     @SuppressLint("SetTextI18n")
@@ -172,6 +249,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         lastNumber = java.lang.Double.parseDouble(textViewResult.text.toString())
         firstNumber += lastNumber
         textViewResult.text = myFormatter.format(firstNumber)
+        dot = true
     }
 
     @SuppressLint("SetTextI18n")
@@ -183,7 +261,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             firstNumber -= lastNumber
         }
         textViewResult.text = myFormatter.format(firstNumber)
-
+        dot = true
     }
 
     @SuppressLint("SetTextI18n")
@@ -197,6 +275,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             firstNumber *= lastNumber
         }
         textViewResult.text = myFormatter.format(firstNumber)
+        dot = true
     }
 
     @SuppressLint("SetTextI18n")
@@ -210,6 +289,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             firstNumber /= lastNumber
         }
         textViewResult.text = myFormatter.format(firstNumber)
+        dot = true
     }
 
 }

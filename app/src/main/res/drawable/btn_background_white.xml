@@ -4,7 +4,7 @@
 
     <solid android:color="#B1B1B1" />
 
-    <corners android:radius="100dp" />
+    <corners android:radius="2000dp" />
     <gradient
         android:centerColor="#9E9E9E"
         android:endColor="#989898"

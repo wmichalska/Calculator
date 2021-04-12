@@ -1,41 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="bottom"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="200dp">
 
-        <TextView
-            android:id="@+id/textViewHistory"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="@color/white"
-            android:gravity="center|end"
-            android:textColor="@color/light_orange"
-            android:textSize="30sp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textViewResult"
-            android:layout_width="match_parent"
-            android:layout_height="110dp"
-            android:background="@color/white"
-            android:gravity="center|end"
-            android:text="0"
-            android:textColor="@color/brown"
-            android:textSize="60sp" />
+            <TextView
+                android:id="@+id/textViewHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center|end"
+                android:textColor="@color/light_orange"
+                android:textSize="30sp" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/textViewResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center|end"
+                android:text="0"
+                android:textColor="@color/brown"
+                android:textSize="60sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <GridLayout
+        android:id="@+id/grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:columnCount="4"
         android:rowCount="5">
 
@@ -275,8 +283,6 @@
             android:text="."
             android:textColor="@color/black"
             android:textSize="30sp" />
-
-
     </GridLayout>
 
 </LinearLayout>
